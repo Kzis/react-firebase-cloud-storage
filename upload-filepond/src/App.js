@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { FilePond, File, registerPlugin } from 'react-filepond';
 import firebase from 'firebase';
 
+import RenderTable from './components/RenderTable';
+
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css';
 
@@ -17,18 +19,19 @@ class App extends Component {
         this.state = {
             files: [],
             uploadValue: 0,
+            filesMetadata:[],
         };
 
-    // Initialize Firebase
-    var config = {
-        apiKey: "AIzaSyDdjNteSHXKMvPbUoKMhXVGVGcnxh1QplI",
-        authDomain: "react-upload.firebaseapp.com",
-        databaseURL: "https://react-upload.firebaseio.com",
-        projectId: "react-upload",
-        storageBucket: "react-upload.appspot.com",
-        messagingSenderId: "704952803467"
-    };
-    firebase.initializeApp(config);
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyDdjNteSHXKMvPbUoKMhXVGVGcnxh1QplI",
+            authDomain: "react-upload.firebaseapp.com",
+            databaseURL: "https://react-upload.firebaseio.com",
+            projectId: "react-upload",
+            storageBucket: "react-upload.appspot.com",
+            messagingSenderId: "704952803467"
+        };
+        firebase.initializeApp(config);
 
     }
     
@@ -56,11 +59,33 @@ class App extends Component {
                 messag:`Upload error : ${error.messag}`
             })
         } , () => {
-            console.log(task.snapshot.downloadURL)
+            //Success
             this.setState({
                 messag:`Upload Success`,
                 picture: task.snapshot.downloadURL
             })
+
+            storageRef.getMetadata().then(function(metadata) {
+                // Metadata now contains the metadata for 'filepond/${file.name}'
+                let metadataFile = { 
+                    name: metadata.name, 
+                    size: metadata.size, 
+                    contentType: metadata.contentType, 
+                    fullPath: metadata.fullPath, 
+                    downloadURLs: metadata.downloadURLs[0], 
+                }
+
+                const databaseRef = firebase.database().ref('/filepond');
+
+                databaseRef.push({
+                    metadataFile
+                  });
+
+              }).catch(function(error) {
+                this.setState({
+                    messag:`Upload error : ${error.messag}`
+                })
+              });
         })
     }
 
@@ -79,6 +104,8 @@ class App extends Component {
                     ))}
                     
                 </FilePond>
+
+                <RenderTable db={firebase}/>
             </div>
         );
     }
