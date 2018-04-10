@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 
 class RenderTable extends Component{
@@ -15,21 +14,24 @@ class RenderTable extends Component{
         }
 
         this.test()
-       
-        this.test2();
+            .then(() => {
+                return this.test2();
+            });
     }
 
-    test(){
-        const databaseRef = this.props.db.database().ref('/filepond');
+    test () {
+        return new Promise((resolve, reject) => {
+            const databaseRef = this.props.db.database().ref('/filepond');
 
-        databaseRef.on('value', snapshot => {
-            this.setState({
-                filesMetadata:snapshot.val()
+            databaseRef.on('value', snapshot => {
+                this.setState({
+                    filesMetadata:snapshot.val()
+                }, () => {
+                    resolve();
+                });
+                // console.log(this.state.filesMetadata);
             });
-
-            console.log(this.state.filesMetadata);
         });
-
     }
 
     test2() {
