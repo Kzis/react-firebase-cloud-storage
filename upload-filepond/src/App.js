@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { FilePond, File, registerPlugin } from 'react-filepond';
 import firebase from 'firebase';
 
-import RenderTable from './components/RenderTable';
+import TableDetail from './components/TableDetail';
 
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css';
@@ -109,7 +109,7 @@ class App extends Component {
                         
                     </FilePond>
 
-                    <RenderTable db={firebase}/>
+                    <TableDetail db={firebase}/>
                 </div>
             </div>
         );

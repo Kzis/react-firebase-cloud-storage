@@ -8,15 +8,12 @@ class RenderTable extends Component{
 
         this.state = {
             rows:  [
-                {},
               ],
             filesMetadata:[{}],
         }
 
         this.getMetaDataFromDatabase()
             .then(() => {
-
-                console.log("Promise");
                 return this.addMetadataToList();
             });
     }
@@ -37,8 +34,8 @@ class RenderTable extends Component{
     }
 
     addMetadataToList() {
-        console.log("addMetadataToList");
-        console.log("============");
+        // console.log("addMetadataToList");
+        // console.log("============");
         let i = 1;
         for (let key in this.state.filesMetadata) {
             
@@ -47,20 +44,20 @@ class RenderTable extends Component{
             let fileData = this.state.filesMetadata[key];
             let rows = this.state.rows;
 
-            console.log("fileData");
-            console.log(i,fileData);
-            console.log("addDataToObject");
+            // console.log("fileData");
+            // console.log(i,fileData);
+            // console.log("addDataToObject");
 
             let objRows =  { 
                 no:i++, 
                 name: fileData.metadataFile.name, 
                 downloadURLs: fileData.metadataFile.downloadURLs, 
                 fullPath: fileData.metadataFile.fullPath,
-                size:fileData.metadataFile.size,
+                size:(fileData.metadataFile.size),
                 contentType:fileData.metadataFile.contentType,
             }
 
-            console.log(objRows);
+            // console.log(objRows);
 
             rows.push(objRows)
 
@@ -68,9 +65,7 @@ class RenderTable extends Component{
                 rows: rows
             })
 
-            // console.log(rows);
-
-            console.log("============");
+            // console.log("============");
         }
 
     }
@@ -101,7 +96,7 @@ class RenderTable extends Component{
                     <td>{r.no}</td>
                     <td>{r.name}</td>
                     <td>{r.contentType}</td>
-                    <td>{r.size}</td>
+                    <td>{r.size} Mb</td>
                     <td><a target="_blank" href={r.downloadURLs}>Download</a></td>
                 </tr>
             )
