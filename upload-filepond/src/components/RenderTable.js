@@ -8,18 +8,20 @@ class RenderTable extends Component{
 
         this.state = {
             rows:  [
-                { no:1, name: '', contentType: '', size: '', downloadURLs:'' },
+                {},
               ],
             filesMetadata:[{}],
         }
 
-        this.test()
+        this.getMetaDataFromDatabase()
             .then(() => {
-                return this.test2();
+
+                console.log("Promise");
+                return this.addMetadataToList();
             });
     }
 
-    test () {
+    getMetaDataFromDatabase () {
         return new Promise((resolve, reject) => {
             const databaseRef = this.props.db.database().ref('/filepond');
 
@@ -34,30 +36,41 @@ class RenderTable extends Component{
         });
     }
 
-    test2() {
-        console.log("test2");
-        for (var key in this.state.filesMetadata) {
-            console.log(this.state.filesMetadata[key]);
+    addMetadataToList() {
+        console.log("addMetadataToList");
+        console.log("============");
+        let i = 1;
+        for (let key in this.state.filesMetadata) {
+            
+            // console.log(i++,this.state.filesMetadata[key]);
 
-            // var fileData = this.state.filesMetadata[key];
-            // var rows = this.state.rows;
+            let fileData = this.state.filesMetadata[key];
+            let rows = this.state.rows;
 
-            // var objRows =  { 
-            //     no:1, 
-            //     name: fileData.name, 
-            //     downloadURLs: fileData.downloadURLs, 
-            //     fullPath: fileData.fullPath,
-            //     size:fileData.size,
-            //     contentType:fileData.contentType,
-            // }
+            console.log("fileData");
+            console.log(i,fileData);
+            console.log("addDataToObject");
 
-            // rows.push(objRows)
+            let objRows =  { 
+                no:i++, 
+                name: fileData.metadataFile.name, 
+                downloadURLs: fileData.metadataFile.downloadURLs, 
+                fullPath: fileData.metadataFile.fullPath,
+                size:fileData.metadataFile.size,
+                contentType:fileData.metadataFile.contentType,
+            }
 
-            // this.setState({
-            //     rows: rows
-            // })
+            console.log(objRows);
+
+            rows.push(objRows)
+
+            this.setState({
+                rows: rows
+            })
 
             // console.log(rows);
+
+            console.log("============");
         }
 
     }
@@ -89,18 +102,19 @@ class RenderTable extends Component{
                     <td>{r.name}</td>
                     <td>{r.contentType}</td>
                     <td>{r.size}</td>
-                    <td>{r.downloadURLs}</td>
+                    <td><a target="_blank" href={r.downloadURLs}>Download</a></td>
                 </tr>
             )
         });
         return (
-            <div className="is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                <table border="1">
+            <div>
+                <table border="1" className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                     <thead>
                         <tr>
                             <th>No.</th>
                             <th>File Name</th>
                             <th>File Type</th>
+                            <th>File Size</th>
                             <th>Url</th>
                         </tr>
                     </thead>

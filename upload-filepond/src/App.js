@@ -1,3 +1,6 @@
+
+import './App.css';
+
 import React, { Component } from 'react';
 import { FilePond, File, registerPlugin } from 'react-filepond';
 import firebase from 'firebase';
@@ -92,20 +95,22 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <FilePond allowMultiple={true}
-                          maxFiles={3}
-                          ref= {ref => this.pond = ref}
-                          server={{ process: this.handleProcessing.bind(this) }}
-                          oninit={() => this.handleInit()}>
-                    
-                  <File/>
-                    {this.state.files.map(file => (
-                        <File key={file} source={file} />
-                    ))}
-                    
-                </FilePond>
+                <div className="Margin-25">
+                    <FilePond allowMultiple={true}
+                            maxFiles={3}
+                            ref= {ref => this.pond = ref}
+                            server={{ process: this.handleProcessing.bind(this) }}
+                            oninit={() => this.handleInit()}>
+                        
+                    <File/>
+                        {this.state.files.map(file => (
+                            <File key={file} source={file} />
+                        ))}
+                        
+                    </FilePond>
 
-                <RenderTable db={firebase}/>
+                    <RenderTable db={firebase}/>
+                </div>
             </div>
         );
     }
