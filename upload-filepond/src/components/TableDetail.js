@@ -5,69 +5,6 @@ class RenderTable extends Component{
     constructor(props){
         super(props);
         // this.onClick = this.onClick.bind(this);
-
-        this.state = {
-            rows:  [
-              ],
-            filesMetadata:[{}],
-        }
-
-        this.getMetaDataFromDatabase()
-            .then(() => {
-                return this.addMetadataToList();
-            });
-    }
-
-    getMetaDataFromDatabase () {
-        return new Promise((resolve, reject) => {
-            const databaseRef = this.props.db.database().ref('/filepond');
-
-            databaseRef.on('value', snapshot => {
-                this.setState({
-                    filesMetadata:snapshot.val()
-                }, () => {
-                    resolve();
-                });
-                // console.log(this.state.filesMetadata);
-            });
-        });
-    }
-
-    addMetadataToList() {
-        // console.log("addMetadataToList");
-        // console.log("============");
-        let i = 1;
-        for (let key in this.state.filesMetadata) {
-            
-            // console.log(i++,this.state.filesMetadata[key]);
-
-            let fileData = this.state.filesMetadata[key];
-            let rows = this.state.rows;
-
-            // console.log("fileData");
-            // console.log(i,fileData);
-            // console.log("addDataToObject");
-
-            let objRows =  { 
-                no:i++, 
-                name: fileData.metadataFile.name, 
-                downloadURLs: fileData.metadataFile.downloadURLs, 
-                fullPath: fileData.metadataFile.fullPath,
-                size:(fileData.metadataFile.size),
-                contentType:fileData.metadataFile.contentType,
-            }
-
-            // console.log(objRows);
-
-            rows.push(objRows)
-
-            this.setState({
-                rows: rows
-            })
-
-            // console.log("============");
-        }
-
     }
   
     // onClick(e) {
@@ -90,9 +27,9 @@ class RenderTable extends Component{
     // }
 
     render() {
-        let messageNodes = this.state.rows.map((r) => {
+        let messageNodes = this.props.rows.map((r) => {
             return (
-                <tr>
+                <tr key={r.no + r.name}>
                     <td>{r.no}</td>
                     <td>{r.name}</td>
                     <td>{r.contentType}</td>
