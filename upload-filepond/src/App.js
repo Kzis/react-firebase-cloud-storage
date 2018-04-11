@@ -23,6 +23,7 @@ class App extends Component {
             files: [],
             uploadValue: 0,
             filesMetadata:[],
+            rows:  [],
         };
 
         // Initialize Firebase
@@ -35,6 +36,61 @@ class App extends Component {
             messagingSenderId: "704952803467"
         };
         firebase.initializeApp(config);
+        
+
+    }
+
+    componentWillMount() {
+        this.getMetaDataFromDatabase()
+    }
+
+    getMetaDataFromDatabase () {
+        const databaseRef = firebase.database().ref('/filepond');
+
+        databaseRef.on('value', snapshot => {
+            this.setState({
+                filesMetadata:snapshot.val()
+            }, () => this.addMetadataToList());
+        });
+    }
+
+    addMetadataToList() {
+        // console.log("addMetadataToList");
+        // console.log("============");
+        let i = 1;
+        let rows = [];
+        for (let key in this.state.filesMetadata) {
+            
+            // console.log(i++,this.state.filesMetadata[key]);
+
+            let fileData = this.state.filesMetadata[key];
+            // let rows = this.state.rows;
+
+            // console.log("fileData");
+            // console.log(i,fileData);
+            // console.log("addDataToObject");
+
+            let objRows =  { 
+                no:i++, 
+                name: fileData.metadataFile.name, 
+                downloadURLs: fileData.metadataFile.downloadURLs, 
+                fullPath: fileData.metadataFile.fullPath,
+                size:(fileData.metadataFile.size),
+                contentType:fileData.metadataFile.contentType,
+            }
+
+            // console.log(objRows);
+
+            rows.push(objRows)
+
+            this.setState({
+                rows: rows
+            }, () => {
+                console.log('set rows')
+            })
+
+            // console.log("============");
+        }
 
     }
     
@@ -93,6 +149,7 @@ class App extends Component {
     }
 
     render() {
+        const { rows, filesMetadata } = this.state;
         return (
             <div className="App">
                 <div className="Margin-25">
@@ -109,7 +166,10 @@ class App extends Component {
                         
                     </FilePond>
 
-                    <TableDetail db={firebase}/>
+                    <TableDetail
+                        rows={rows}
+                        filesMetadata={filesMetadata}
+                    />
                 </div>
             </div>
         );
