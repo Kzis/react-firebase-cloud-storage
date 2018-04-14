@@ -6,7 +6,7 @@ class RenderTable extends Component{
         super(props);
         // this.onClick = this.onClick.bind(this);
     }
-  
+
     // onClick(e) {
     //     e.preventDefault();
     //     var rows = this.state.rows;
@@ -35,6 +35,7 @@ class RenderTable extends Component{
                     <td>{r.contentType}</td>
                     <td>{r.size} Mb</td>
                     <td><a target="_blank" href={r.downloadURLs}>Download</a></td>
+                    <td><a target="_blank" onClick={(e) => this.props.deleteData(e,r)}>Delete</a></td>
                 </tr>
             )
         });
@@ -47,7 +48,8 @@ class RenderTable extends Component{
                             <th>File Name</th>
                             <th>File Type</th>
                             <th>File Size</th>
-                            <th>Url</th>
+                            <th>Download</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>

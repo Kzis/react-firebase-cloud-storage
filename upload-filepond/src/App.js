@@ -1,11 +1,10 @@
 
-import './App.css';
-
 import React, { Component } from 'react';
 import { FilePond, File, registerPlugin } from 'react-filepond';
 import firebase from 'firebase';
-
 import TableDetail from './components/TableDetail';
+
+import './App.css';
 
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css';
@@ -20,10 +19,10 @@ class App extends Component {
         super(props);
 
         this.state = {
-            files: [],
-            uploadValue: 0,
-            filesMetadata:[],
-            rows:  [],
+            files: [], //ใช้เก็บข้อมูล File ที่ Upload
+            uploadValue: 0, //ใช้เพื่อดู Process การ Upload
+            filesMetadata:[], //ใช้เพื่อรับข้อมูล Metadata จาก Firebase
+            rows:  [], //ใช้วาด DataTable
         };
 
         // Initialize Firebase
@@ -40,11 +39,15 @@ class App extends Component {
 
     }
 
+    //ใช้ตอนที่ยังไม่ Mount DOM
     componentWillMount() {
         this.getMetaDataFromDatabase()
     }
 
+    //โหลดข้อมูล Metadata จาก Firebase
     getMetaDataFromDatabase () {
+
+        console.log("getMetaDataFromDatabase");
         const databaseRef = firebase.database().ref('/filepond');
 
         databaseRef.on('value', snapshot => {
@@ -54,24 +57,52 @@ class App extends Component {
         });
     }
 
+    //ลบข้อมูล Metada จาก Firebase
+    deleteMetaDataFromDatabase(e,rowData){
+
+        const storageRef = firebase.storage().ref(`filepond/${rowData.name}`);
+        let databaseRef = firebase.database().ref('/filepond');
+
+        // Delete the file on storage
+        storageRef.delete()
+        .then(function() {
+            console.log("Delete file success");
+
+             // Delete the file on realtime database
+             databaseRef.child(rowData.key).remove()
+             .then(function() {
+                console.log("Delete metada success");
+            })
+            .catch(function(error) {
+                console.log("Delete metada error : ", error.messag);
+            });;
+
+        })
+        
+        .catch(function(error) {
+            console.log("Delete file error : " , error.messag);
+        });
+ 
+        // this.setState({
+        //     rows: this.getMetaDataFromDatabase()
+        // }, () => {
+        //     console.log('Set Rows')
+        // })
+    }
+    
+    //โหลดข้อมูลเข้า list table
     addMetadataToList() {
-        // console.log("addMetadataToList");
-        // console.log("============");
         let i = 1;
         let rows = [];
+
+        //Loop add data to rows
         for (let key in this.state.filesMetadata) {
-            
-            // console.log(i++,this.state.filesMetadata[key]);
-
+              
             let fileData = this.state.filesMetadata[key];
-            // let rows = this.state.rows;
-
-            // console.log("fileData");
-            // console.log(i,fileData);
-            // console.log("addDataToObject");
 
             let objRows =  { 
                 no:i++, 
+                key:key, //ใช้เพื่อ Delete
                 name: fileData.metadataFile.name, 
                 downloadURLs: fileData.metadataFile.downloadURLs, 
                 fullPath: fileData.metadataFile.fullPath,
@@ -79,22 +110,19 @@ class App extends Component {
                 contentType:fileData.metadataFile.contentType,
             }
 
-            // console.log(objRows);
-
             rows.push(objRows)
 
             this.setState({
                 rows: rows
             }, () => {
-                console.log('set rows')
+                console.log('Set Rows')
             })
-
-            // console.log("============");
         }
 
     }
     
     handleInit() {
+         // handle init file upload here
         console.log('now initialised', this.pond);
     }
 
@@ -110,10 +138,12 @@ class App extends Component {
         task.on(`state_changed` , (snapshort) => {
             console.log(snapshort.bytesTransferred, snapshort.totalBytes)
             let percentage = (snapshort.bytesTransferred / snapshort.totalBytes) * 100;
+            //Process
             this.setState({
                 uploadValue:percentage
             })
         } , (error) => {
+            //Error
             this.setState({
                 messag:`Upload error : ${error.messag}`
             })
@@ -121,7 +151,7 @@ class App extends Component {
             //Success
             this.setState({
                 messag:`Upload Success`,
-                picture: task.snapshot.downloadURL
+                picture: task.snapshot.downloadURL //เผื่อนำไปใช้ต่อในการแสดงรูปที่ Upload ไป
             })
 
             storageRef.getMetadata().then(function(metadata) {
@@ -169,6 +199,7 @@ class App extends Component {
                     <TableDetail
                         rows={rows}
                         filesMetadata={filesMetadata}
+                        deleteData={this.deleteMetaDataFromDatabase}
                     />
                 </div>
             </div>
