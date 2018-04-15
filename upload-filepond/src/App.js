@@ -61,33 +61,32 @@ class App extends Component {
     deleteMetaDataFromDatabase(e,rowData){
 
         const storageRef = firebase.storage().ref(`filepond/${rowData.name}`);
-        let databaseRef = firebase.database().ref('/filepond');
 
         // Delete the file on storage
         storageRef.delete()
-        .then(function() {
+        .then(() => {
             console.log("Delete file success");
 
-             // Delete the file on realtime database
-             databaseRef.child(rowData.key).remove()
-             .then(function() {
+            let databaseRef = firebase.database().ref('/filepond');
+
+            // Delete the file on realtime database
+            databaseRef.child(rowData.key).remove()
+            .then(() => {
                 console.log("Delete metada success");
+                console.log(this);
+                // this.getMetaDataFromDatabase()
             })
-            .catch(function(error) {
+            .catch((error) => {
                 console.log("Delete metada error : ", error.messag);
-            });;
+            });
 
         })
         
-        .catch(function(error) {
+        .catch((error) => {
             console.log("Delete file error : " , error.messag);
         });
  
-        // this.setState({
-        //     rows: this.getMetaDataFromDatabase()
-        // }, () => {
-        //     console.log('Set Rows')
-        // })
+    
     }
     
     //โหลดข้อมูลเข้า list table
