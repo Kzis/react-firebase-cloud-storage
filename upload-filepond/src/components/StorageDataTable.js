@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class RenderTable extends Component{
+class StorageDataTable extends Component{
     
     constructor(props){
         super(props);
@@ -62,4 +62,4 @@ class RenderTable extends Component{
     }
 }
 
-export default RenderTable;
+export default StorageDataTable;

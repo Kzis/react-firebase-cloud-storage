@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { FilePond, File, registerPlugin } from 'react-filepond';
 import firebase from 'firebase';
-import TableDetail from './components/TableDetail';
+import StorageDataTable from './components/StorageDataTable';
 
 import './App.css';
 
@@ -74,7 +74,7 @@ class App extends Component {
             .then(() => {
                 console.log("Delete metada success");
                 console.log(this);
-                // this.getMetaDataFromDatabase()
+                this.getMetaDataFromDatabase()
             })
             .catch((error) => {
                 console.log("Delete metada error : ", error.messag);
@@ -153,7 +153,7 @@ class App extends Component {
                 picture: task.snapshot.downloadURL //เผื่อนำไปใช้ต่อในการแสดงรูปที่ Upload ไป
             })
 
-            storageRef.getMetadata().then(function(metadata) {
+            storageRef.getMetadata().then((metadata) => {
                 // Metadata now contains the metadata for 'filepond/${file.name}'
                 let metadataFile = { 
                     name: metadata.name, 
@@ -188,14 +188,13 @@ class App extends Component {
                             server={{ process: this.handleProcessing.bind(this) }}
                             oninit={() => this.handleInit()}>
                         
-                    <File/>
                         {this.state.files.map(file => (
                             <File key={file} source={file} />
                         ))}
                         
                     </FilePond>
 
-                    <TableDetail
+                    <StorageDataTable
                         rows={rows}
                         filesMetadata={filesMetadata}
                         deleteData={this.deleteMetaDataFromDatabase}
