@@ -46,14 +46,15 @@ class App extends Component {
 
     //โหลดข้อมูล Metadata จาก Firebase
     getMetaDataFromDatabase () {
-
         console.log("getMetaDataFromDatabase");
         const databaseRef = firebase.database().ref('/filepond');
 
         databaseRef.on('value', snapshot => {
             this.setState({
                 filesMetadata:snapshot.val()
-            }, () => this.addMetadataToList());
+            }, () => {
+                this.addMetadataToList()
+            });
         });
     }
 
@@ -77,13 +78,13 @@ class App extends Component {
                 this.getMetaDataFromDatabase()
             })
             .catch((error) => {
-                console.log("Delete metada error : ", error.messag);
+                console.log("Delete metada error : ", error.message);
             });
 
         })
         
         .catch((error) => {
-            console.log("Delete file error : " , error.messag);
+            console.log("Delete file error : " , error.message);
         });
  
     
@@ -93,7 +94,7 @@ class App extends Component {
     addMetadataToList() {
         let i = 1;
         let rows = [];
-
+        
         //Loop add data to rows
         for (let key in this.state.filesMetadata) {
               
@@ -110,13 +111,13 @@ class App extends Component {
             }
 
             rows.push(objRows)
-
-            this.setState({
-                rows: rows
-            }, () => {
-                console.log('Set Rows')
-            })
         }
+
+        this.setState({
+            rows: rows
+        }, () => {
+            console.log('Set Rows')
+        })
 
     }
     
@@ -144,7 +145,7 @@ class App extends Component {
         } , (error) => {
             //Error
             this.setState({
-                messag:`Upload error : ${error.messag}`
+                messag:`Upload error : ${error.message}`
             })
         } , () => {
             //Success
@@ -171,7 +172,7 @@ class App extends Component {
 
               }).catch(function(error) {
                 this.setState({
-                    messag:`Upload error : ${error.messag}`
+                    messag:`Upload error : ${error.message}`
                 })
               });
         })
