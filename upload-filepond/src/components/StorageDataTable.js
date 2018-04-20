@@ -4,27 +4,7 @@ class StorageDataTable extends Component{
     
     constructor(props){
         super(props);
-        // this.onClick = this.onClick.bind(this);
     }
-
-    // onClick(e) {
-    //     e.preventDefault();
-    //     var rows = this.state.rows;
-
-    //     var objRows =  { no:rows[rows.length-1].no + 1, name: 'New add', age: 99, color: 'red' }
-
-
-    //     console.log(rows)
-    //     console.log(objRows)
-       
-    //     rows.push(objRows)
-        
-    //     console.log(rows)
-
-    //     this.setState({
-    //         rows: rows
-    //     })
-    // }
 
     render() {
         let messageNodes = this.props.rows.map((r) => {

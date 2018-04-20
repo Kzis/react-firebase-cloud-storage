@@ -74,7 +74,6 @@ class App extends Component {
             databaseRef.child(rowData.key).remove()
             .then(() => {
                 console.log("Delete metada success");
-                console.log(this);
                 this.getMetaDataFromDatabase()
             })
             .catch((error) => {
